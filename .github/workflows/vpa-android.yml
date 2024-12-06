@@ -16,7 +16,7 @@ jobs:
       matrix:
         java: [ '21' ]
         os: [ 'ubuntu-latest' ]
-    name: TestNG Appium Repo ${{ matrix.Java }} - ${{ matrix.os }} Sample
+    name: TestNG Appium Repo ${{ matrix.java }} - ${{ matrix.os }} Sample
     env:
       BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
       BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
@@ -29,7 +29,7 @@ jobs:
       - uses: actions/github-script@98814c53be79b1d30f795b907e553d8679345975
         id: status-check-in-progress
         env:
-          job_name: TestNG Appium Repo ${{ matrix.Java }} - ${{ matrix.os }} Sample
+          job_name: TestNG Appium Repo ${{ matrix.java }} - ${{ matrix.os }} Sample
           commit_sha: ${{ github.event.inputs.commit_sha }}
         with:
           github-token: ${{ github.token }}
@@ -56,44 +56,44 @@ jobs:
       - name: Run mvn test for VPA_Android.Login package
         run: |
           cd android/testng-examples
-          mvn compile
+          mvn clean compile
           mvn test -Dtest=VPA_Android.Login.*
 
       # Optionally, run other tests for Android/iOS if needed
       - name: Run mvn test for testng android
         run: |
           cd android/testng-examples
-          mvn compile
+          mvn clean compile
           mvn test
 
       - name: Run mvn profile sample-test for testng android
         run: |
           cd android/testng-examples
-          mvn compile
+          mvn clean compile
           mvn test -P sample-test
 
       - name: Run mvn profile sample-local-test for testng android with Vpa APK
         run: |
           cd android/testng-examples
-          mvn compile
+          mvn clean compile
           mvn test -P sample-local-test -D"browserstack.app"="./Vpa-v(0.4.21)-241107-product-release (1).apk"
 
       - name: Run mvn test for testng ios
         run: |
           cd ios/testng-examples
-          mvn compile
+          mvn clean compile
           mvn test
 
       - name: Run mvn profile sample-test for testng ios
         run: |
           cd ios/testng-examples
-          mvn compile
+          mvn clean compile
           mvn test -P sample-test
 
       - name: Run mvn profile sample-local-test for testng ios
         run: |
           cd ios/testng-examples
-          mvn compile
+          mvn clean compile
           mvn test -P sample-local-test -D"browserstack.app"="./LocalSample.ipa"
 
       - if: always()
@@ -101,7 +101,7 @@ jobs:
         id: status-check-completed
         env:
           conclusion: ${{ job.status }}
-          job_name: TestNG Appium Repo ${{ matrix.Java }} - ${{ matrix.os }} Sample
+          job_name: TestNG Appium Repo ${{ matrix.java }} - ${{ matrix.os }} Sample
           commit_sha: ${{ github.event.inputs.commit_sha }}
         with:
           github-token: ${{ github.token }}
