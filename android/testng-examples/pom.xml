@@ -14,7 +14,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <surefire.version>2.22.2</surefire.version>
+        <surefire.version>2.19.1</surefire.version>
+        <surefire.plugin.version>3.0.0-M5</surefire.plugin.version>
         <config.file>default</config.file>
     </properties>
 
@@ -71,16 +72,20 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
                 <configuration>
-                    <includes>
-                        <include>**/VPA_Android/Login/*Test.java</include>
-                    </includes>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <argLine>-Xmx1024m -Xms512m</argLine> <!-- Tăng bộ nhớ heap -->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/com/browserstack/sample-test.testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
                     <argLine>-javaagent:${com.browserstack:browserstack-java-sdk:jar}</argLine>
-                    <forkCount>1</forkCount>
-                    <reuseForks>false</reuseForks>
-                    <argLine>-Xmx1024m -Xms512m</argLine> <!-- Tăng bộ nhớ heap -->
                 </configuration>
             </plugin>
             <plugin>
