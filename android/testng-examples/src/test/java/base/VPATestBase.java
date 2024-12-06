@@ -2,6 +2,7 @@ package base;
 
 import java.net.URL;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.MutableCapabilities;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -19,6 +20,7 @@ public class VPATestBase {
     public void setUp() throws Exception {
         MutableCapabilities capabilities = new UiAutomator2Options();
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),capabilities);
+        validateHelpers.clickElement(By.xpath("//android.widget.Button[@resource-id=\"com.vpa.daugia:id/btnGoTo\"]"));
     }
 
     @AfterMethod(alwaysRun=true)
