@@ -1,16 +1,12 @@
 package base;
 
-import com.google.common.collect.ImmutableMap;
-import io.appium.java_client.PerformsTouchActions;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
-import io.appium.java_client.android.options.UiAutomator2Options;
 
-import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.*;
 //import org.openqa.selenium.devtools.v105.page.Page;
@@ -18,12 +14,10 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
-import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.*;
 import org.testng.Assert;
 import org.apache.commons.io.FileUtils;
 
-import javax.swing.text.Element;
 import java.io.File;
 import java.io.IOException;
 import java.text.Normalizer;
@@ -32,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static base.VPATestBase.SCREENSHOT_PATH;
+import static base.VPATestBase1.SCREENSHOT_PATH;
 
 public class ValidateHelpers {
 
@@ -661,7 +655,7 @@ public void scrollDownOnce() {
         // Nếu đã thử hết số lần mà vẫn không thành công
         System.out.println("Không thể click vào phần tử sau " + maxRetries + " lần thử: " + element);
     }
-    
+
 
     private void clearAndInputTextNormal(WebElement element, String text) throws InterruptedException {
         element.clear();
