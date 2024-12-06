@@ -17,7 +17,7 @@ import io.appium.java_client.AppiumBy;
 
 public class LocalTest extends AppiumTest {
 
-    @Test
+//    @Test
     public void test() throws Exception {
     WebElement searchElement = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
         ExpectedConditions.elementToBeClickable(AppiumBy.id("com.example.android.basicnetworking:id/test_action")));

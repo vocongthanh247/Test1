@@ -1,3 +1,6 @@
+# This job is to test different maven profiles in sdk branch against full commit-id provided
+# This workflow targets Java with Maven execution
+
 name: vpa android
 
 on:
@@ -12,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      max-parallel: 1  # Giảm độ song song để giảm tải
+      max-parallel: 3
       matrix:
         java: [ '21' ]
         os: [ 'ubuntu-latest' ]
@@ -25,19 +28,60 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.commit_sha }}
-
+      - uses: actions/github-script@98814c53be79b1d30f795b907e553d8679345975
+        id: status-check-in-progress
+        env:
+          job_name: TestNG Appium Repo ${{ matrix.Java }} - ${{ matrix.os }} Sample
+          commit_sha: ${{ github.event.inputs.commit_sha }}
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const result = await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: process.env.job_name,
+              head_sha: process.env.commit_sha,
+              status: 'in_progress'
+            }).catch((err) => ({status: err.status, response: err.response}));
+            console.log(`The status-check response : ${result.status} Response : ${JSON.stringify(result.response)}`);
+            if (result.status !== 201) {
+              console.log('Failed to create check run');
+            }
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
-
-      - name: Run mvn test for VPA_Android.Login package
+      - name: Run mvn test for testng android
         run: |
           cd android/testng-examples
           mvn compile
-          mvn test -Dtest=VPA_Android.Login.*
-
+          mvn test
+      - name: Run mvn profile sample-test for testng android
+        run: |
+          cd android/testng-examples
+          mvn compile
+          mvn test -P sample-test
+      - name: Run mvn profile sample-local-test for testng android with Vpa APK
+        run: |
+          cd android/testng-examples
+          mvn compile
+          mvn test -P sample-local-test -D"browserstack.app"="./Vpa-v(0.4.21)-241107-product-release (1).apk"
+      - name: Run mvn test for testng ios
+        run: |
+          cd ios/testng-examples
+          mvn compile
+          mvn test
+      - name: Run mvn profile sample-test for testng ios
+        run: |
+          cd ios/testng-examples
+          mvn compile
+          mvn test -P sample-test
+      - name: Run mvn profile sample-local-test for testng ios
+        run: |
+          cd ios/testng-examples
+          mvn compile
+          mvn test -P sample-local-test -D"browserstack.app"="./LocalSample.ipa"
       - if: always()
         uses: actions/github-script@98814c53be79b1d30f795b907e553d8679345975
         id: status-check-completed
@@ -49,12 +93,12 @@ jobs:
           github-token: ${{ github.token }}
           script: |
             const result = await github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: process.env.job_name,
-              head_sha: process.env.commit_sha,
-              status: 'completed',
-              conclusion: process.env.conclusion
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            name: process.env.job_name,
+            head_sha: process.env.commit_sha,
+            status: 'completed',
+            conclusion: process.env.conclusion
             }).catch((err) => ({status: err.status, response: err.response}));
             console.log(`The status-check response : ${result.status} Response : ${JSON.stringify(result.response)}`);
             if (result.status !== 201) {
