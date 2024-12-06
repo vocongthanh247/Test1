@@ -1,6 +1,6 @@
 package VPA_Android.Login;
 
-import basez.TestBase;
+
 import base.VPATestBase;
 import org.openqa.selenium.By;
 import org.testng.annotations.BeforeMethod;
@@ -154,7 +154,7 @@ public class ValidateForgotSDT extends VPATestBase {
             validateHelpers.clearInputField(By.xpath("//android.widget.EditText"));
 
             // Test chặn ký tự đặc biệt
-            validateHelpers.clickAndInput(By.xpath("///android.widget.EditText"), "@#$%");
+            validateHelpers.clickAndInput(By.xpath("//android.widget.EditText"), "@#$%");
             String valueAfterSpecial = driver.findElement(By.xpath("//android.widget.EditText")).getText();
             if (valueAfterSpecial.isEmpty()) {
                 System.out.println("PASSED: khongNhapKiTuOTP");
