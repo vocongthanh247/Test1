@@ -3,8 +3,7 @@
 <suite name="First">
     <test name="FirstTest">
         <packages>
-            <package name="com.browserstack"/>
-            <package name="VPA_Android"/>
+            <package name="VPA_Android.Login"/>
         </packages>
     </test>
 </suite>
