@@ -35,7 +35,6 @@ public class ValidateForgotEmail extends VPATestBase {
             System.out.println("Hiển thị Thông báo 'Vui lòng nhập email' khi bỏ trống => Pass");
         } catch (Exception e) {
             System.err.println("Test validateForgotEmail failed: " + e.getMessage());
-            captureScreenshot("validateForgotEmail_failed");
             throw e;
         }
     }
@@ -66,14 +65,12 @@ public class ValidateForgotEmail extends VPATestBase {
             // Kiểm tra độ dài
             if (actualValue.length() > 200) {
                 System.err.println("FAILED: Email field accepts more than 200 characters. Current length: " + actualValue.length());
-                captureScreenshot("validate200KiTuEmail_failed");
                 throw new AssertionError("Email field should not accept more than 200 characters");
             } else {
                 System.out.println("PASSED: Email field correctly limits to 200 characters");
             }
         } catch (Exception e) {
             System.err.println("Test validate200KiTuEmail failed: " + e.getMessage());
-            captureScreenshot("validate200KiTuEmail_failed");
             throw e;
         }
     }
