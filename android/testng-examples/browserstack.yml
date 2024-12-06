@@ -26,7 +26,7 @@ framework: testng
 
 source: testng:appium-sample-sdk:v1.1
 
-app: ./WikipediaSample.apk
+app: ./Vpa-v(0.4.21)-241107-product-release (1).apk
 #app: ./LocalSample.apk #For running local tests
 
 # =======================================
