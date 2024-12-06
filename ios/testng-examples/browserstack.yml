@@ -42,8 +42,11 @@ platforms:
   - deviceName: iPhone 13 Pro
     osVersion: 15
     platformName: ios
-  - deviceName: iPhone 15 Plus
-    osVersion: 17
+  - deviceName: iPhone 11
+    osVersion: 14
+    platformName: ios
+  - deviceName: iPhone 12
+    osVersion: 15
     platformName: ios
 
 # =======================
