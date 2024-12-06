@@ -83,7 +83,7 @@
                         <version>2.22.2</version>
                         <configuration>
                             <includes>
-                                <include>VPA_Android/Login/**/*Test.class</include>  <!-- Bao gồm tất cả các class kiểm tra trong package -->
+                                <include>**/VPA_Android/Login/*Test.java</include>
                             </includes>
                         </configuration>
                     </plugin>
