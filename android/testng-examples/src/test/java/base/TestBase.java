@@ -33,16 +33,6 @@ public class TestBase {
         service.start();
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("deviceName", "RF8X50FF96M");
-        capabilities.setCapability("udid", "RF8X50FF96M");
-        capabilities.setCapability("platformName", "Android");
-        capabilities.setCapability("platformVersion", "14");
-        capabilities.setCapability("automationName", "UiAutomator2");
-        capabilities.setCapability("noReset", true);
-        capabilities.setCapability("fullReset", false);
-        capabilities.setCapability("autoGrantPermissions", true);
-        capabilities.setCapability("autoDismissAlerts", true);
-
         URL url = new URL("http://127.0.0.1:4723");
         driver = new AndroidDriver(url, capabilities);
     }
