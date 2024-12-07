@@ -57,7 +57,7 @@ jobs:
       - name: Run Appium tests
         run: |
           cd android/testng-examples  # Đảm bảo bạn đang ở đúng thư mục
-          mvn clean test -Dappium.server=http://localhost:4723/wd/hub -Dappium.app=Vpa-v(0.4.21)-241107-product-release\ (1).apk
+          mvn clean test  # Chỉ chạy lệnh mvn clean test
 
       # 9. Dọn dẹp sau khi test xong
       - name: Stop Emulator

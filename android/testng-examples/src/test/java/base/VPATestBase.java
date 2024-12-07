@@ -1,7 +1,6 @@
 package base;
 
 import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.WebDriver;
 import io.appium.java_client.android.AndroidDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -23,6 +22,10 @@ public class VPATestBase {
         caps.setCapability("deviceName", "emulator-5554");  // Thiết bị giả lập
         caps.setCapability("platformVersion", "10.0");
         caps.setCapability("automationName", "UiAutomator2"); // Sử dụng UiAutomator2 cho Android
+
+        // Đường dẫn đến file APK
+        String apkPath = "android/testng-examples/Vpa-v(0.4.21)-241107-product-release (1).apk"; // Cập nhật đường dẫn đến file APK của bạn
+        caps.setCapability("app", apkPath); // Thêm capability cho file APK
 
         // URL của Appium server (local trong trường hợp này)
         URL appiumServerUrl = new URL("http://localhost:4723/wd/hub");
