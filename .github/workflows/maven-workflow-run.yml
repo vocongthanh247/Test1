@@ -18,24 +18,27 @@ jobs:
       - name: Install Android SDK
         run: |
           sudo apt update
-          sudo apt install -y openjdk-11-jdk
-          sudo apt install -y wget unzip
+          sudo apt install -y openjdk-11-jdk wget unzip
 
           # Tải và giải nén SDK Command-line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
           unzip commandlinetools-linux-7583922_latest.zip
 
           # Tạo thư mục android-sdk và di chuyển command-line tools vào đó
-          sudo mkdir -p /usr/local/android-sdk/cmdline-tools
+          sudo mkdir -p /usr/local/android-sdk/cmdline-tools/latest
           sudo mv cmdline-tools /usr/local/android-sdk/cmdline-tools/latest
 
           # Thiết lập các biến môi trường
           echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
           echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/latest/bin:/usr/local/android-sdk/platform-tools" >> $GITHUB_ENV
 
+          # Kiểm tra lại biến môi trường
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "PATH=$PATH"
+
           # Cài đặt các gói cần thiết qua sdkmanager
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30" "emulator" "system-images;android-30;google_apis;x86_64"
+          yes | /usr/local/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+          /usr/local/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30" "emulator" "system-images;android-30;google_apis;x86_64"
 
       # 3. Cài đặt Appium
       - name: Install Appium
@@ -45,7 +48,7 @@ jobs:
       # 4. Chạy Android Emulator
       - name: Start Android Emulator
         run: |
-          echo "no" | avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64"
+          echo "no" | /usr/local/android-sdk/cmdline-tools/latest/bin/avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64"
           nohup emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm &
           sleep 120  # Đợi emulator khởi động
 
