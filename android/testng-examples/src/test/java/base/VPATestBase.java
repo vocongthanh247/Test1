@@ -21,21 +21,25 @@ public class VPATestBase {
 
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("browserstack.user", "your_browserstack_username");
-        capabilities.setCapability("browserstack.key", "your_browserstack_access_key");
-        capabilities.setCapability("device", "Samsung Galaxy S20");
-        capabilities.setCapability("os_version", "10.0");
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setCapability("browserstack.user", "thanhvo_DtH7RP");
+        caps.setCapability("browserstack.key", "AH576ScJ6B8qgD1DxLz6");
+        caps.setCapability("device", "Samsung Galaxy S20");
+        caps.setCapability("os_version", "10.0");
+        caps.setCapability("project", "MyAppiumProject");
+        caps.setCapability("build", "build-1");
+        caps.setCapability("name", "Test name");
 
-        URL url = new URL("http://hub-cloud.browserstack.com/wd/hub");
-        WebDriver driver = new RemoteWebDriver(url, capabilities);
+        URL browserstackUrl = new URL("https://hub-cloud.browserstack.com/wd/hub");
+        WebDriver driver = new RemoteWebDriver(browserstackUrl, caps);
         driver.get("https://www.google.com");
         System.out.println(driver.getTitle());
         driver.quit();
 
 
 
-        validateHelpers.clickElement(By.xpath("//android.widget.Button[@resource-id=\"com.vpa.daugia:id/btnGoTo\"]"));
+
+//        validateHelpers.clickElement(By.xpath("//android.widget.Button[@resource-id=\"com.vpa.daugia:id/btnGoTo\"]"));
     }
 
     @AfterMethod(alwaysRun=true)
