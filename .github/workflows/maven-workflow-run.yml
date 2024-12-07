@@ -15,29 +15,11 @@ jobs:
         uses: actions/checkout@v3
 
       # 2. Cài đặt Android SDK
-      - name: Install Android SDK
-        run: |
-          sudo apt update
-          sudo apt install -y openjdk-11-jdk wget unzip
-
-          # Tạo thư mục cho Android SDK trong thư mục home
-          mkdir -p $HOME/android-sdk/cmdline-tools
-
-          # Tải về và giải nén Android SDK command line tools
-          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
-          unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk/cmdline-tools/
-
-          # Cập nhật biến môi trường
-          echo "export ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/cmdline-tools/bin:\$ANDROID_HOME/platform-tools:\$ANDROID_HOME/emulator" >> $GITHUB_ENV
-
-          # Kiểm tra sdkmanager
-          echo "Checking sdkmanager version..."
-          sdkmanager --version || { echo "sdkmanager not found"; exit 1; }
-
-          # Cài đặt SDK và hệ thống Android cần thiết
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30" "emulator" "system-images;android-30;google_apis;x86_64"
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 30
+          build-tools: 30.0.3
 
       # 3. Cài đặt Appium
       - name: Install Appium
