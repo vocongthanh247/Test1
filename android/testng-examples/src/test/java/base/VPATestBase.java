@@ -4,7 +4,9 @@ import java.net.URL;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.MutableCapabilities;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -19,15 +21,18 @@ public class VPATestBase {
 
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("platformName", "Android");
-        caps.setCapability("deviceName", "Samsung Galaxy S20");
-        caps.setCapability("browserName", "Chrome");
-        caps.setCapability("browserstack.user", System.getenv("BROWSERSTACK_USERNAME"));
-        caps.setCapability("browserstack.key", System.getenv("BROWSERSTACK_ACCESS_KEY"));
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("browserstack.user", "your_browserstack_username");
+        capabilities.setCapability("browserstack.key", "your_browserstack_access_key");
+        capabilities.setCapability("device", "Samsung Galaxy S20");
+        capabilities.setCapability("os_version", "10.0");
 
-        URL url = new URL("https://hub-cloud.browserstack.com/wd/hub");
-        AndroidDriver driver = new AndroidDriver(url, caps);
+        URL url = new URL("http://hub-cloud.browserstack.com/wd/hub");
+        WebDriver driver = new RemoteWebDriver(url, capabilities);
+        driver.get("https://www.google.com");
+        System.out.println(driver.getTitle());
+        driver.quit();
+
 
 
         validateHelpers.clickElement(By.xpath("//android.widget.Button[@resource-id=\"com.vpa.daugia:id/btnGoTo\"]"));
