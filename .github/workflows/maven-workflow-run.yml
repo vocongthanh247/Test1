@@ -57,39 +57,29 @@ jobs:
         run: |
           pkill -f appium || true  # Dừng Appium server nếu nó đang chạy
 
-      # 9. Kiểm tra xem cổng 4723 có đang được sử dụng không
-      - name: Check if port 4723 is in use
-        run: |
-          if lsof -i :4723; then
-            echo "Port 4723 is in use. Stopping any running Appium server."
-            pkill -f appium || true
-          else
-            echo "Port 4723 is free."
-          fi
-
-      # 10. Khởi động Appium Server
+      # 9. Khởi động Appium Server trên cổng khác (ví dụ: 4725)
       - name: Start Appium Server
         run: |
-          appium &  # Khởi động Appium server trong nền
+          appium -p 4725 &  # Khởi động Appium server trên cổng 4725
           sleep 20  # Đợi một chút để server khởi động
 
-      # 11. Kiểm tra trạng thái của Appium server
+      # 10. Kiểm tra trạng thái của Appium server
       - name: Check Appium Server Status
         run: |
-          curl http://localhost:4723/wd/hub/status || echo "Appium server is not running"
+          curl http://localhost:4725/wd/hub/status || echo "Appium server is not running"
 
-      # 12. Kiểm tra trạng thái của Emulator
+      # 11. Kiểm tra trạng thái của Emulator
       - name: Check Emulator Status
         run: |
           adb devices || echo "Emulator is not running"
 
-      # 13. Chạy các bài kiểm tra Appium
+      # 12. Chạy các bài kiểm tra Appium
       - name: Run Appium tests
         run: |
           cd android/testng-examples  # Đảm bảo bạn đang ở đúng thư mục
-          mvn clean test -Dappium.server=http://localhost:4723/wd/hub  # Sử dụng cổng 4723
+          mvn clean test -Dappium.server=http://localhost:4725/wd/hub  # Sử dụng cổng 4725
 
-      # 14. Dọn dẹp sau khi test xong
+      # 13. Dọn dẹp sau khi test xong
       - name: Stop Emulator
         run: |
           adb -s emulator-5554 emu kill
