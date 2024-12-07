@@ -71,7 +71,7 @@ jobs:
       - name: Run Appium tests
         run: |
           cd android/testng-examples  # Đảm bảo bạn đang ở đúng thư mục
-          mvn clean test -Dappium.server=http://localhost:4726/wd/hub  # Sử dụng cổng 4726
+          mvn clean test -Dappium.server=http://127.0.0.1:4723  # Sử dụng cổng 4726
 
       # 12. Dọn dẹp sau khi test xong
       - name: Stop Emulator
