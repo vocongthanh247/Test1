@@ -18,7 +18,7 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
         with:
-          api-level: 30
+          api-level: 29  # Thay đổi phiên bản Android
           build-tools: 30.0.3
 
       # 3. Cài đặt Appium
@@ -39,7 +39,7 @@ jobs:
       # 6. Cài đặt hình ảnh hệ thống cho AVD (sử dụng x86_64)
       - name: Install System Image for AVD
         run: |
-          yes | sdkmanager "system-images;android-30;google_apis;x86_64"
+          yes | sdkmanager "system-images;android-29;google_apis;x86_64"  # Thay đổi phiên bản Android
 
       # 7. Cài đặt Emulator
       - name: Install Emulator
@@ -59,13 +59,13 @@ jobs:
       # 9. Tạo Android Emulator với hình ảnh x86_64
       - name: Create Android Emulator
         run: |
-          avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64" --force --device "pixel" --tag "google_apis"
+          avdmanager create avd --name test_emulator --package "system-images;android-29;google_apis;x86_64" --force --device "pixel" --tag "google_apis"
 
-      # 10. Khởi động Android Emulator
+      # 10. Khởi động Android Emulator với tham số -no-accel
       - name: Start Android Emulator
         run: |
           export PATH=$PATH:$ANDROID_HOME/emulator
-          bash -c "emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm -no-snapshot-load &"
+          bash -c "emulator -avd test_emulator -no-window -gpu off -no-accel -qemu -m 2048 -no-snapshot-load &"
           sleep 240  # Tăng thời gian chờ để emulator khởi động
 
       # 11. Kiểm tra trạng thái của Emulator
