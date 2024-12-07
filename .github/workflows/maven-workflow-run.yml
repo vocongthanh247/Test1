@@ -20,15 +20,18 @@ jobs:
           sudo apt update
           sudo apt install -y openjdk-11-jdk wget unzip
 
+          # Tạo thư mục cho Android SDK trong thư mục home
+          mkdir -p $HOME/android-sdk
+
           # Tải về và giải nén Android SDK command line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
-          unzip commandlinetools-linux-7583922_latest.zip -d /usr/local/android-sdk/
+          unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk/
 
           # Di chuyển cmdline-tools vào thư mục thích hợp
-          sudo mv /usr/local/android-sdk/cmdline-tools /usr/local/android-sdk/cmdline-tools/latest
+          mv $HOME/android-sdk/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
 
           # Cập nhật biến môi trường
-          echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
+          echo "export ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
           echo "export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/platform-tools:\$ANDROID_HOME/emulator" >> $GITHUB_ENV
 
           # Kiểm tra sdkmanager
