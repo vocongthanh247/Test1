@@ -1,4 +1,4 @@
-name: Set up Java 21 and Build
+name: Run Appium Tests on Android Emulator (Free)
 
 on:
   push:
@@ -6,61 +6,62 @@ on:
       - main
 
 jobs:
-  setup-java:
+  android-emulator:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout mã nguồn
+      # 1. Checkout mã nguồn
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Cài đặt Java 21 với phân phối Temurin
-      - name: Set up Java 21
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          check-latest: false
-          server-id: github
-          server-username: ${{ github.actor }}
-          server-password: ${{ secrets.GITHUB_TOKEN }}
-          overwrite-settings: true
-
-      # Cài đặt Maven
-      - name: Set up Maven
+      # 2. Cài đặt Android SDK
+      - name: Install Android SDK
         run: |
           sudo apt update
-          sudo apt install -y maven
+          sudo apt install -y openjdk-11-jdk
+          sudo apt install -y wget unzip
+          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
+          unzip commandlinetools-linux-7583922_latest.zip
+          sudo mkdir -p /usr/local/android-sdk
+          sudo mv cmdline-tools /usr/local/android-sdk/
+          echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
+          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/bin:/usr/local/android-sdk/platform-tools" >> $GITHUB_ENV
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30" "emulator" "system-images;android-30;google_apis;x86_64"
 
-      # Cài đặt Node.js và Appium
-      - name: Set up Node.js and install Appium
+      # 3. Cài đặt Appium
+      - name: Install Appium
         run: |
-          sudo apt install -y nodejs
-          sudo apt install -y npm
           npm install -g appium
 
-      # Cài đặt các phụ thuộc (nếu có) cho các bài kiểm tra Appium
-      - name: Install Appium dependencies
+      # 4. Cài đặt Appium Doctor để kiểm tra môi trường
+      - name: Install Appium Doctor
         run: |
-          npm install appium @wdio/cli @wdio/appium-service
+          npm install -g appium-doctor
+          appium-doctor
 
-      # Di chuyển vào thư mục chứa pom.xml và chạy build và test với Maven
-      - name: Build and test with Maven
+      # 5. Cài đặt KVM (tăng tốc phần cứng) cho Android Emulator (nếu cần)
+      - name: Install KVM for Android Emulator
         run: |
-          cd android/testng-examples  # Thay đổi thư mục làm việc đến nơi chứa pom.xml
-          mvn clean install
+          sudo apt-get install -y qemu-kvm libvirt-bin bridge-utils virt-manager
+          sudo adduser $USER kvm
+          sudo adduser $USER libvirt
+          newgrp kvm
+          newgrp libvirt
 
-      # Chạy các bài kiểm tra Appium (Nếu bạn có script riêng cho Appium)
-      - name: Run Appium tests with BrowserStack
-        env:
-          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
-          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      # 6. Chạy Android Emulator
+      - name: Start Android Emulator
         run: |
-          appium &
-          # Nếu bạn có file test Appium cụ thể, ví dụ như 'appium-tests.js', thì chạy lệnh sau:
-          # npx wdio run ./wdio.conf.js
+          echo "no" | avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64"
+          nohup emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm &
+          sleep 120  # Đợi emulator khởi động
 
-      # Gọi API GitHub
-      - name: Make an API call to GitHub
+      # 7. Chạy các bài kiểm tra Appium
+      - name: Run Appium tests
         run: |
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/user
+          mvn clean test -Dappium.server=http://localhost:4723/wd/hub
+
+      # 8. Dọn dẹp sau khi test xong
+      - name: Stop Emulator
+        run: |
+          adb -s emulator-5554 emu kill

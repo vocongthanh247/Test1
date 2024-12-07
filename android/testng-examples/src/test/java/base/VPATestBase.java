@@ -1,14 +1,11 @@
 package base;
 
-import java.net.URL;
-import org.openqa.selenium.By;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import io.appium.java_client.android.AndroidDriver;
+import java.net.URL;
 
 public class VPATestBase {
     protected ValidateHelpers validateHelpers;
@@ -16,21 +13,22 @@ public class VPATestBase {
 
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("browserstack.user", "thanhvo_DtH7RP");
-        caps.setCapability("browserstack.key", "AH576ScJ6B8qgD1DxLz6");
-        caps.setCapability("device", "Samsung Galaxy S20");
-        caps.setCapability("os_version", "10.0");
-        caps.setCapability("project", "MyAppiumProject");
-        caps.setCapability("build", "build-1");
-        caps.setCapability("name", "Test name");
+        // Thiết lập các capabilities cho Android Emulator
+        MutableCapabilities caps = new MutableCapabilities();
+        caps.setCapability("platformName", "Android");
+        caps.setCapability("deviceName", "emulator-5554");  // Thiết bị giả lập
+        caps.setCapability("platformVersion", "10.0");
+        caps.setCapability("automationName", "UiAutomator2"); // Sử dụng UiAutomator2 cho Android
 
-        URL browserstackUrl = new URL("https://hub-cloud.browserstack.com/wd/hub");
+        // URL của Appium server (local trong trường hợp này)
+        URL appiumServerUrl = new URL("http://localhost:4723/wd/hub");
 
-        driver = new AndroidDriver(browserstackUrl, caps);
+        // Khởi tạo AndroidDriver với các capabilities đã thiết lập
+        driver = new AndroidDriver(appiumServerUrl, caps);
 
-        driver.get("https://www.google.com");
-        System.out.println(driver.getTitle());
+        // Bạn có thể bắt đầu tương tác với ứng dụng của mình ở đây
+        // driver.get("https://www.google.com"); // Nếu làm việc với web
+        System.out.println("Successfully started the Android Emulator session.");
     }
 
     @AfterMethod(alwaysRun=true)
@@ -38,6 +36,7 @@ public class VPATestBase {
         // Đảm bảo driver được tắt sau khi thực hiện xong
         if (driver != null) {
             driver.quit();
+            System.out.println("Driver session ended.");
         }
     }
 }
