@@ -32,11 +32,33 @@ jobs:
           sudo apt update
           sudo apt install -y maven
 
+      # Cài đặt Node.js và Appium
+      - name: Set up Node.js and install Appium
+        run: |
+          sudo apt install -y nodejs
+          sudo apt install -y npm
+          npm install -g appium
+
+      # Cài đặt các phụ thuộc (nếu có) cho các bài kiểm tra Appium
+      - name: Install Appium dependencies
+        run: |
+          npm install appium @wdio/cli @wdio/appium-service
+
       # Di chuyển vào thư mục chứa pom.xml và chạy build và test với Maven
       - name: Build and test with Maven
         run: |
-          cd android/testng-examples   # Thay đổi thư mục làm việc đến nơi chứa pom.xml
+          cd android/testng-examples  # Thay đổi thư mục làm việc đến nơi chứa pom.xml
           mvn clean install
+
+      # Chạy các bài kiểm tra Appium (Nếu bạn có script riêng cho Appium)
+      - name: Run Appium tests with BrowserStack
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        run: |
+          appium &
+          # Nếu bạn có file test Appium cụ thể, ví dụ như 'appium-tests.js', thì chạy lệnh sau:
+          # npx wdio run ./wdio.conf.js
 
       # Gọi API GitHub
       - name: Make an API call to GitHub
