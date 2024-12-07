@@ -30,7 +30,7 @@ public class VPATestBase {
         caps.setCapability("app", apkPath); // Thêm capability cho file APK
 
         // URL của Appium server (local trong trường hợp này)
-        URL appiumServerUrl = new URL("http://127.0.0.1:4725");
+        URL appiumServerUrl = new URL("http://127.0.0.1:4726");
 
         // Khởi tạo AndroidDriver với các capabilities đã thiết lập
         driver = new AndroidDriver(appiumServerUrl, caps);
