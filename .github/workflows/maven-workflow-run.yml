@@ -46,44 +46,34 @@ jobs:
         run: |
           yes | sdkmanager "emulator"
 
-      # 8. Kiểm tra thư mục chứa emulator
-      - name: Check Emulator Directory
+      # 8. Thêm đường dẫn vào PATH và kiểm tra
+      - name: Set PATH and Check Emulator
         run: |
-          echo "Checking emulator directory"
-          ls $ANDROID_HOME/emulator
-
-      # 9. Thêm đường dẫn vào PATH
-      - name: Add Emulator to PATH
-        run: |
-          echo "export PATH=\$PATH:\$ANDROID_HOME/emulator" >> $GITHUB_ENV
-          echo "export PATH=\$PATH:\$ANDROID_HOME/tools" >> $GITHUB_ENV
-          echo "export PATH=\$PATH:\$ANDROID_HOME/tools/bin" >> $GITHUB_ENV
-          echo "export PATH=\$PATH:\$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
-
-      # 10. Kiểm tra xem emulator có trong PATH không
-      - name: Check Emulator Path
-        run: |
+          export PATH=$PATH:$ANDROID_HOME/emulator
+          export PATH=$PATH:$ANDROID_HOME/tools
+          export PATH=$PATH:$ANDROID_HOME/tools/bin
+          export PATH=$PATH:$ANDROID_HOME/platform-tools
           echo "Checking if emulator is in PATH"
           which emulator || echo "Emulator not found in PATH"
 
-      # 11. Tạo Android Emulator
+      # 9. Tạo Android Emulator
       - name: Create Android Emulator
         run: |
           echo "no" | avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64"
 
-      # 12. Khởi động Android Emulator
+      # 10. Khởi động Android Emulator
       - name: Start Android Emulator
         run: |
           emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm & 
           sleep 180  # Đợi emulator khởi động
 
-      # 13. Kiểm tra trạng thái của Emulator
+      # 11. Kiểm tra trạng thái của Emulator
       - name: Check Emulator Status
         run: |
           adb wait-for-device
           adb devices || (echo "Emulator is not running." && exit 1)
 
-      # 14. Dừng Appium Server nếu đang chạy
+      # 12. Dừng Appium Server nếu đang chạy
       - name: Stop Appium Server if running
         run: |
           if pgrep -f appium; then
@@ -91,13 +81,13 @@ jobs:
             pkill -f appium
           fi
 
-      # 15. Khởi động Appium Server trên cổng khác (ví dụ: 4726)
+      # 13. Khởi động Appium Server trên cổng khác (ví dụ: 4726)
       - name: Start Appium Server
         run: |
           appium -p 4726 | tee appium.log &  # Khởi động Appium server trên cổng 4726 và ghi log
           sleep 30  # Đợi một chút để server khởi động
 
-      # 16. Kiểm tra trạng thái của Appium server
+      # 14. Kiểm tra trạng thái của Appium server
       - name: Check Appium Server Status
         run: |
           sleep 5  # Đợi một chút trước khi kiểm tra
@@ -109,13 +99,13 @@ jobs:
             exit 1
           fi
 
-      # 17. Chạy các bài kiểm tra Appium
+      # 15. Chạy các bài kiểm tra Appium
       - name: Run Appium tests
         run: |
           cd android/testng-examples  # Đảm bảo bạn đang ở đúng thư mục
           mvn clean test -Dappium.server=http://localhost:4726/wd/hub  # Sử dụng cổng 4726
 
-      # 18. Dọn dẹp sau khi test xong
+      # 16. Dọn dẹp sau khi test xong
       - name: Stop Emulator
         run: |
           adb -s emulator-5554 emu kill
