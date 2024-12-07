@@ -32,12 +32,17 @@ jobs:
           npm install -g appium-doctor
           appium-doctor
 
-      # 5. Cài đặt hình ảnh hệ thống cho AVD
+      # 5. Cài đặt driver Android cho Appium
+      - name: Install Appium Android Driver
+        run: |
+          appium driver install uiautomator2
+
+      # 6. Cài đặt hình ảnh hệ thống cho AVD
       - name: Install System Image for AVD
         run: |
           yes | sdkmanager "system-images;android-30;google_apis;x86_64"
 
-      # 6. Tạo và khởi động Android Emulator
+      # 7. Tạo và khởi động Android Emulator
       - name: Start Android Emulator
         run: |
           # Tạo Android Virtual Device (AVD) cho emulator
@@ -47,34 +52,34 @@ jobs:
           nohup emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm & 
           sleep 120  # Đợi emulator khởi động
 
-      # 7. Dừng Appium Server nếu đang chạy
+      # 8. Dừng Appium Server nếu đang chạy
       - name: Stop Appium Server if running
         run: |
           pkill -f appium || true  # Dừng Appium server nếu nó đang chạy
 
-      # 8. Khởi động Appium Server
+      # 9. Khởi động Appium Server
       - name: Start Appium Server
         run: |
           appium &  # Khởi động Appium server trong nền
           sleep 10  # Đợi một chút để server khởi động
 
-      # 9. Kiểm tra trạng thái của Appium server
+      # 10. Kiểm tra trạng thái của Appium server
       - name: Check Appium Server Status
         run: |
           curl http://localhost:4723/wd/hub/status || echo "Appium server is not running"
 
-      # 10. Kiểm tra trạng thái của Emulator
+      # 11. Kiểm tra trạng thái của Emulator
       - name: Check Emulator Status
         run: |
           adb devices || echo "Emulator is not running"
 
-      # 11. Chạy các bài kiểm tra Appium
+      # 12. Chạy các bài kiểm tra Appium
       - name: Run Appium tests
         run: |
           cd android/testng-examples  # Đảm bảo bạn đang ở đúng thư mục
           mvn clean test -Dappium.server=http://localhost:4723/wd/hub  # Sử dụng cổng 4723
 
-      # 12. Dọn dẹp sau khi test xong
+      # 13. Dọn dẹp sau khi test xong
       - name: Stop Emulator
         run: |
           adb -s emulator-5554 emu kill
