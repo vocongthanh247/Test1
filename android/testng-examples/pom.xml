@@ -12,9 +12,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>17</maven.compiler.target> <!-- Cập nhật JDK version -->
-        <maven.compiler.source>17</maven.compiler.source> <!-- Cập nhật JDK version -->
-        <surefire.version>2.22.2</surefire.version> <!-- Cập nhật phiên bản ổn định -->
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <surefire.version>2.19.1</surefire.version>
+        <surefire.plugin.version>3.0.0-M5</surefire.plugin.version>
         <config.file>default</config.file>
     </properties>
 
@@ -54,40 +55,52 @@
 
     <build>
         <plugins>
-            <!-- Maven Surefire Plugin -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>getClasspathFilenames</id>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
+                <version>2.22.2</version>
                 <configuration>
-                    <!-- Tăng bộ nhớ JVM -->
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>
-                    <argLine>-Xmx4096m -Xms2048m</argLine> <!-- Tăng bộ nhớ heap lên 4GB, bộ nhớ ban đầu 2GB -->
-                    <!-- Đảm bảo đường dẫn đến testng.xml chính xác -->
+                    <argLine>-Xmx1024m -Xms512m</argLine> <!-- Tăng bộ nhớ heap -->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/com/browserstack/sample-test.testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
-                    <!-- Đảm bảo đường dẫn đúng với browserstack-java-sdk -->
-                    <argLine>-javaagent:/path/to/browserstack-java-sdk.jar</argLine> <!-- Đảm bảo đúng đường dẫn -->
+                    <argLine>-javaagent:${com.browserstack:browserstack-java-sdk:jar}</argLine>
                 </configuration>
             </plugin>
-
-            <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <profiles>
-        <!-- Profile cho test trên BrowserStack -->
         <profile>
             <id>sample-test</id>
             <build>
@@ -104,8 +117,6 @@
                 </plugins>
             </build>
         </profile>
-
-        <!-- Profile cho test local -->
         <profile>
             <id>sample-local-test</id>
             <build>
