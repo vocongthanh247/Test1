@@ -1,106 +1,38 @@
-# This job is to test different maven profiles in sdk branch against full commit-id provided
-# This workflow targets Java with Maven execution
-
-name: Java SDK Test workflow for Maven on workflow_dispatch
+name: Run Tests on BrowserStack
 
 on:
-  workflow_dispatch:
-    inputs:
-      commit_sha:
-        description: 'The full commit id to build'
-        required: true
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  comment-run:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      max-parallel: 3
-      matrix:
-        java: [ '21' ]
-        os: [ 'ubuntu-latest' ]
-    name: TestNG Appium Repo ${{ matrix.Java }} - ${{ matrix.os }} Sample
-    env:
-      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
-      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-
+  test:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.inputs.commit_sha }}
-      - uses: actions/github-script@98814c53be79b1d30f795b907e553d8679345975
-        id: status-check-in-progress
-        env:
-          job_name: TestNG Appium Repo ${{ matrix.Java }} - ${{ matrix.os }} Sample
-          commit_sha: ${{ github.event.inputs.commit_sha }}
-        with:
-          github-token: ${{ github.token }}
-          script: |
-            const result = await github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: process.env.job_name,
-              head_sha: process.env.commit_sha,
-              status: 'in_progress'
-            }).catch((err) => ({status: err.status, response: err.response}));
-            console.log(`The status-check response : ${result.status} Response : ${JSON.stringify(result.response)}`)
-            if (result.status !== 201) {
-              console.log('Failed to create check run')
-            }
-      - name: Set up Java
+      # Checkout mã nguồn
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Cài đặt Java (JDK 21)
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: ${{ matrix.java }}
-      - name: Run mvn test for testng android
-        run: |
-          cd android/testng-examples
-          mvn compile
-          mvn test
-      - name: Run mvn profile sample-test for testng android
-        run: |
-          cd android/testng-examples
-          mvn compile
-          mvn test -P sample-test
-      - name: Run mvn profile sample-local-test for testng android
-        run: |
-          cd android/testng-examples
-          mvn compile
-          mvn test -P sample-test -D"browserstack.app"="./Vpa-v(0.4.21)-241107-product-release (1).apk"
-      - name: Run mvn test for testng ios
-        run: |
-          cd ios/testng-examples
-          mvn compile
-          mvn test
-      - name: Run mvn profile sample-test for testng ios
-        run: |
-          cd ios/testng-examples
-          mvn compile
-          mvn test -P sample-test
-      - name: Run mvn profile sample-local-test for testng ios
-        run: |
-          cd ios/testng-examples
-          mvn compile
-          mvn test -P sample-local-test -D"browserstack.app"="./LocalSample.ipa"
-      - if: always()
-        uses: actions/github-script@98814c53be79b1d30f795b907e553d8679345975
-        id: status-check-completed
-        env:
-          conclusion: ${{ job.status }}
-          job_name: TestNG Appium Repo ${{ matrix.Java }} - ${{ matrix.os }} Sample
-          commit_sha: ${{ github.event.inputs.commit_sha }}
+          java-version: '21'
+
+      # Cài đặt các phụ thuộc Maven (Java 21)
+      - name: Set up Maven
+        uses: actions/setup-java@v3
         with:
-          github-token: ${{ github.token }}
-          script: |
-            const result = await github.rest.checks.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            name: process.env.job_name,
-            head_sha: process.env.commit_sha,
-            status: 'completed',
-            conclusion: process.env.conclusion
-            }).catch((err) => ({status: err.status, response: err.response}));
-            console.log(`The status-check response : ${result.status} Response : ${JSON.stringify(result.response)}`)
-            if (result.status !== 201) {
-              console.log('Failed to create check run')
-            }
+          java-version: '21'
+          maven-version: '3.8.1'
+
+      # Cài đặt các phụ thuộc và chạy test
+      - name: Run tests
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        run: |
+          mvn clean test -Dtestng.xml=src/test/resources/com/browserstack/sample-test.testng.xml

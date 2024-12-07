@@ -23,11 +23,12 @@ public class VPATestBase {
         caps.setCapability("platformName", "Android");
         caps.setCapability("deviceName", "Samsung Galaxy S20");
         caps.setCapability("browserName", "Chrome");
-        caps.setCapability("browserstack.user", "thanhvo_DtH7RP");
-        caps.setCapability("browserstack.key", "AH576ScJ6B8qgD1DxLz6");
+        caps.setCapability("browserstack.user", System.getenv("BROWSERSTACK_USERNAME"));
+        caps.setCapability("browserstack.key", System.getenv("BROWSERSTACK_ACCESS_KEY"));
 
         URL url = new URL("https://hub-cloud.browserstack.com/wd/hub");
         AndroidDriver driver = new AndroidDriver(url, caps);
+
 
         validateHelpers.clickElement(By.xpath("//android.widget.Button[@resource-id=\"com.vpa.daugia:id/btnGoTo\"]"));
     }
