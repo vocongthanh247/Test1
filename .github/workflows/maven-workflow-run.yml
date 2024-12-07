@@ -30,7 +30,10 @@ jobs:
 
           # Cập nhật biến môi trường để có thể sử dụng sdkmanager và các công cụ khác
           echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
-          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/bin:/usr/local/android-sdk/platform-tools:/usr/local/android-sdk/emulator:/usr/local/android-sdk/cmdline-tools/tools/bin" >> $GITHUB_ENV
+          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/bin:/usr/local/android-sdk/platform-tools:/usr/local/android-sdk/emulator" >> $GITHUB_ENV
+
+          # Kiểm tra sdkmanager
+          sdkmanager --version  # Kiểm tra sdkmanager để đảm bảo công cụ đã được cài đặt
 
           # Cài đặt SDK và hệ thống Android cần thiết
           yes | sdkmanager --licenses
