@@ -10,7 +10,7 @@ public class VPATestBase {
     protected ValidateHelpers validateHelpers;
     public AndroidDriver driver;  // Đảm bảo driver là một thuộc tính của lớp
 
-    @BeforeMethod(alwaysRun=true)
+    @BeforeMethod
     public void setUp() throws Exception {
         // Khởi động Appium Server (nếu chưa được chạy)
         ProcessBuilder builder = new ProcessBuilder("appium");
@@ -21,6 +21,8 @@ public class VPATestBase {
         caps.setCapability("platformName", "Android");
         caps.setCapability("deviceName", "emulator-5554");  // Thiết bị giả lập
         caps.setCapability("platformVersion", "10.0");
+        caps.setCapability("appPackage", "com.vpa.daugia");
+        caps.setCapability("appActivity", "com.vpa.daugia.ui.splash.SplashActivity");
         caps.setCapability("automationName", "UiAutomator2"); // Sử dụng UiAutomator2 cho Android
 
         // Đường dẫn đến file APK
@@ -28,7 +30,7 @@ public class VPATestBase {
         caps.setCapability("app", apkPath); // Thêm capability cho file APK
 
         // URL của Appium server (local trong trường hợp này)
-        URL appiumServerUrl = new URL("http://localhost:4723/wd/hub");
+        URL appiumServerUrl = new URL("http://127.0.0.1:4723");
 
         // Khởi tạo AndroidDriver với các capabilities đã thiết lập
         driver = new AndroidDriver(appiumServerUrl, caps);
@@ -39,7 +41,7 @@ public class VPATestBase {
         System.out.println("Successfully started the Android Emulator session.");
     }
 
-    @AfterMethod(alwaysRun=true)
+    @AfterMethod
     public void tearDown() throws Exception {
         // Đảm bảo driver được tắt sau khi thực hiện xong
         if (driver != null) {
