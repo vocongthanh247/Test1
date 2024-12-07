@@ -64,7 +64,8 @@ jobs:
       # 10. Khởi động Android Emulator
       - name: Start Android Emulator
         run: |
-          emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm -no-snapshot-load & 
+          export PATH=$PATH:$ANDROID_HOME/emulator
+          bash -c "emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm -no-snapshot-load &"
           sleep 180  # Đợi emulator khởi động
 
       # 11. Kiểm tra trạng thái của Emulator
