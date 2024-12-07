@@ -3,7 +3,7 @@
 <suite name="First">
     <test name="FirstTest">
         <packages>
-            <package name="VPA_Android.Login"/>
+            <package name="VPA_Android.Login"/> <!-- Đảm bảo tên package chính xác -->
         </packages>
     </test>
 </suite>
