@@ -4,6 +4,7 @@ import java.net.URL;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.MutableCapabilities;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -18,8 +19,16 @@ public class VPATestBase {
 
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
-        MutableCapabilities capabilities = new UiAutomator2Options();
-        driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),capabilities);
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setCapability("platformName", "Android");
+        caps.setCapability("deviceName", "Samsung Galaxy S20");
+        caps.setCapability("browserName", "Chrome");
+        caps.setCapability("browserstack.user", "thanhvo_DtH7RP");
+        caps.setCapability("browserstack.key", "AH576ScJ6B8qgD1DxLz6");
+
+        URL url = new URL("https://hub-cloud.browserstack.com/wd/hub");
+        AndroidDriver driver = new AndroidDriver(url, caps);
+
         validateHelpers.clickElement(By.xpath("//android.widget.Button[@resource-id=\"com.vpa.daugia:id/btnGoTo\"]"));
     }
 
