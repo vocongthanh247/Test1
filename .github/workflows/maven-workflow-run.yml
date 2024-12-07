@@ -56,10 +56,10 @@ jobs:
           echo "Checking if emulator is in PATH"
           which emulator || echo "Emulator not found in PATH"
 
-      # 9. Tạo Android Emulator mà không sử dụng yes
+      # 9. Tạo Android Emulator mà không sử dụng yes và cung cấp tham số
       - name: Create Android Emulator
         run: |
-          avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;arm64-v8a" --force
+          avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;arm64-v8a" --force --device "pixel" --tag "google_apis"
 
       # 10. Khởi động Android Emulator
       - name: Start Android Emulator
