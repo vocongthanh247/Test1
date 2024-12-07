@@ -54,13 +54,13 @@ jobs:
       # 8. Khởi động Appium Server trên cổng khác (ví dụ: 4726)
       - name: Start Appium Server
         run: |
-          appium -p 4726 > appium.log 2>&1 &  # Khởi động Appium server trên cổng 4726 và ghi log
+          appium -p 4723 > appium.log 2>&1 &  # Khởi động Appium server trên cổng 4726 và ghi log
           sleep 30  # Đợi một chút để server khởi động
 
       # 9. Kiểm tra trạng thái của Appium server
       - name: Check Appium Server Status
         run: |
-          curl -s http://localhost:4726/wd/hub/status | grep -q '"status": 0' || (echo "Appium server is not running." && exit 1)
+          curl -s http://127.0.0.1:4723/wd/hub/status | grep -q '"status": 0' || (echo "Appium server is not running." && exit 1)
 
       # 10. Kiểm tra trạng thái của Emulator
       - name: Check Emulator Status
