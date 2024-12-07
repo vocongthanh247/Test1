@@ -19,18 +19,23 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y openjdk-11-jdk wget unzip
+          
+          # Tải về và giải nén Android SDK command line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
           unzip commandlinetools-linux-7583922_latest.zip
+
+          # Di chuyển Android SDK vào thư mục thích hợp
           sudo mkdir -p /usr/local/android-sdk
           sudo mv cmdline-tools /usr/local/android-sdk/
+          
+          # Cập nhật biến môi trường để có thể sử dụng sdkmanager và các công cụ khác
           echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
-          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/bin:/usr/local/android-sdk/platform-tools:/usr/local/android-sdk/cmdline-tools/tools/bin" >> $GITHUB_ENV
-          echo "export PATH=\$PATH:/usr/local/android-sdk/emulator" >> $GITHUB_ENV
+          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/bin:/usr/local/android-sdk/platform-tools:/usr/local/android-sdk/emulator:/usr/local/android-sdk/cmdline-tools/tools/bin" >> $GITHUB_ENV
+          
+          # Kiểm tra sdkmanager
+          sdkmanager --version  # Kiểm tra sdkmanager để đảm bảo công cụ đã được cài đặt
 
-          # Kiểm tra sdkmanager để đảm bảo đã cài đúng
-          sdkmanager --version  # Kiểm tra sdkmanager
-
-          # Cài đặt SDK tools cần thiết
+          # Cài đặt SDK và hệ thống Android cần thiết
           yes | sdkmanager --licenses
           sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30" "emulator" "system-images;android-30;google_apis;x86_64"
 
@@ -48,7 +53,10 @@ jobs:
       # 5. Tạo và khởi động Android Emulator
       - name: Start Android Emulator
         run: |
+          # Tạo Android Virtual Device (AVD) cho emulator
           echo "no" | avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64"
+          
+          # Khởi động emulator trong nền (no-window để không có giao diện người dùng)
           nohup emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm & 
           sleep 120  # Đợi emulator khởi động
 
