@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>17</maven.compiler.target> <!-- Cập nhật JDK version -->
         <maven.compiler.source>17</maven.compiler.source> <!-- Cập nhật JDK version -->
-        <surefire.version>3.0.0-M5</surefire.version>
+        <surefire.version>2.22.2</surefire.version> <!-- Cập nhật phiên bản ổn định -->
         <config.file>default</config.file>
     </properties>
 
@@ -66,7 +66,8 @@
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/com/browserstack/sample-test.testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
-                    <argLine>-javaagent:${com.browserstack:browserstack-java-sdk:jar}</argLine>
+                    <!-- Chỉnh sửa javaagent -->
+                    <argLine>-javaagent:/path/to/browserstack-java-sdk.jar</argLine> <!-- Đảm bảo đúng đường dẫn -->
                 </configuration>
             </plugin>
 
