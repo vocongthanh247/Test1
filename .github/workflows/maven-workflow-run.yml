@@ -1,4 +1,4 @@
-name: Set up Java 21 and Build
+name: Set up Java 21, Build and Call GitHub API
 
 on:
   push:
@@ -10,11 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout mã nguồn
+      # Bước này để checkout mã nguồn của repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Cài đặt Java 21 và Maven
+      # Bước này cài đặt Java 21 và Maven
       - name: Set up Java 21
         uses: actions/setup-java@v3
         with:
@@ -26,12 +26,18 @@ jobs:
           server-password: ${{ secrets.GITHUB_TOKEN }}
           overwrite-settings: true
 
-      # Cài đặt Maven và chạy build
+      # Bước này cài đặt Maven và build dự án
       - name: Set up Maven
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           maven-version: '3.8.1'
 
+      # Bước này chạy build Maven và test
       - name: Build and test with Maven
         run: mvn clean install
+
+      # Bước này gọi API GitHub để lấy thông tin người dùng
+      - name: Make an API call to GitHub
+        run: |
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/user
