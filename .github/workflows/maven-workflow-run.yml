@@ -20,12 +20,18 @@ jobs:
           sudo apt update
           sudo apt install -y openjdk-11-jdk
           sudo apt install -y wget unzip
+
+          # Tải và cài đặt command line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
           unzip commandlinetools-linux-7583922_latest.zip
           sudo mkdir -p /usr/local/android-sdk
           sudo mv cmdline-tools /usr/local/android-sdk/
+
+          # Thiết lập biến môi trường
           echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
-          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/bin:/usr/local/android-sdk/platform-tools" >> $GITHUB_ENV
+          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/latest/bin:/usr/local/android-sdk/platform-tools" >> $GITHUB_ENV
+
+          # Chạy sdkmanager để cài đặt các thành phần cần thiết
           yes | sdkmanager --licenses
           sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30" "emulator" "system-images;android-30;google_apis;x86_64"
 
@@ -34,34 +40,19 @@ jobs:
         run: |
           npm install -g appium
 
-      # 4. Cài đặt Appium Doctor để kiểm tra môi trường
-      - name: Install Appium Doctor
-        run: |
-          npm install -g appium-doctor
-          appium-doctor
-
-      # 5. Cài đặt KVM (tăng tốc phần cứng) cho Android Emulator (nếu cần)
-      - name: Install KVM for Android Emulator
-        run: |
-          sudo apt-get install -y qemu-kvm libvirt-bin bridge-utils virt-manager
-          sudo adduser $USER kvm
-          sudo adduser $USER libvirt
-          newgrp kvm
-          newgrp libvirt
-
-      # 6. Chạy Android Emulator
+      # 4. Chạy Android Emulator
       - name: Start Android Emulator
         run: |
           echo "no" | avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64"
           nohup emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm &
           sleep 120  # Đợi emulator khởi động
 
-      # 7. Chạy các bài kiểm tra Appium
+      # 5. Chạy các bài kiểm tra Appium
       - name: Run Appium tests
         run: |
           mvn clean test -Dappium.server=http://localhost:4723/wd/hub
 
-      # 8. Dọn dẹp sau khi test xong
+      # 6. Dọn dẹp sau khi test xong
       - name: Stop Emulator
         run: |
           adb -s emulator-5554 emu kill
