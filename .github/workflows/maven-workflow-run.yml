@@ -24,8 +24,13 @@ jobs:
           sudo mkdir -p /usr/local/android-sdk
           sudo mv cmdline-tools /usr/local/android-sdk/
           echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
-          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/bin:/usr/local/android-sdk/platform-tools" >> $GITHUB_ENV
-          # Cài đặt các công cụ Android cần thiết
+          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/bin:/usr/local/android-sdk/platform-tools:/usr/local/android-sdk/cmdline-tools/tools/bin" >> $GITHUB_ENV
+          echo "export PATH=\$PATH:/usr/local/android-sdk/emulator" >> $GITHUB_ENV
+
+          # Kiểm tra sdkmanager để đảm bảo đã cài đúng
+          sdkmanager --version  # Kiểm tra sdkmanager
+
+          # Cài đặt SDK tools cần thiết
           yes | sdkmanager --licenses
           sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30" "emulator" "system-images;android-30;google_apis;x86_64"
 
@@ -43,25 +48,16 @@ jobs:
       # 5. Tạo và khởi động Android Emulator
       - name: Start Android Emulator
         run: |
-          # Kiểm tra xem Emulator có đã được tạo chưa
-          echo "no" | avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64" || true
-          # Chạy emulator
+          echo "no" | avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64"
           nohup emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm & 
-          # Đợi Emulator khởi động
-          sleep 120  # Thời gian này có thể cần điều chỉnh tùy thuộc vào tốc độ hệ thống
+          sleep 120  # Đợi emulator khởi động
 
-      # 6. Khởi động Appium Server
-      - name: Start Appium Server
-        run: |
-          appium &  # Chạy Appium server ở background
-          sleep 10   # Đợi Appium server khởi động
-
-      # 7. Chạy các bài kiểm tra Appium
+      # 6. Chạy các bài kiểm tra Appium
       - name: Run Appium tests
         run: |
           mvn clean test -Dappium.server=http://localhost:4723/wd/hub
 
-      # 8. Dọn dẹp sau khi test xong
+      # 7. Dọn dẹp sau khi test xong
       - name: Stop Emulator
         run: |
           adb -s emulator-5554 emu kill
