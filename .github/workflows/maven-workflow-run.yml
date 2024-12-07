@@ -61,7 +61,7 @@ jobs:
       - name: Start Appium Server
         run: |
           appium &  # Khởi động Appium server trong nền
-          sleep 10  # Đợi một chút để server khởi động
+          sleep 20  # Tăng thời gian chờ để đảm bảo server đã khởi động
 
       # 10. Kiểm tra trạng thái của Appium server
       - name: Check Appium Server Status
