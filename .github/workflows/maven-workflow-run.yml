@@ -58,13 +58,23 @@ jobs:
           appium &  # Khởi động Appium server trong nền
           sleep 10  # Đợi một chút để server khởi động
 
-      # 9. Chạy các bài kiểm tra Appium
+      # 9. Kiểm tra trạng thái của Appium server
+      - name: Check Appium Server Status
+        run: |
+          curl http://localhost:4723/wd/hub/status || echo "Appium server is not running"
+
+      # 10. Kiểm tra trạng thái của Emulator
+      - name: Check Emulator Status
+        run: |
+          adb devices || echo "Emulator is not running"
+
+      # 11. Chạy các bài kiểm tra Appium
       - name: Run Appium tests
         run: |
           cd android/testng-examples  # Đảm bảo bạn đang ở đúng thư mục
-          mvn clean test  # Chỉ chạy lệnh mvn clean test
+          mvn clean test -Dappium.server=http://localhost:4723/wd/hub  # Sử dụng cổng 4723
 
-      # 10. Dọn dẹp sau khi test xong
+      # 12. Dọn dẹp sau khi test xong
       - name: Stop Emulator
         run: |
           adb -s emulator-5554 emu kill
