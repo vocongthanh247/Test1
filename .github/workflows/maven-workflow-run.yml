@@ -22,18 +22,18 @@ jobs:
 
           # Tải về và giải nén Android SDK command line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
-          unzip commandlinetools-linux-7583922_latest.zip
+          unzip commandlinetools-linux-7583922_latest.zip -d /usr/local/android-sdk/
 
-          # Di chuyển Android SDK vào thư mục thích hợp
-          sudo mkdir -p /usr/local/android-sdk
-          sudo mv cmdline-tools /usr/local/android-sdk/
+          # Di chuyển cmdline-tools vào thư mục thích hợp
+          sudo mv /usr/local/android-sdk/cmdline-tools /usr/local/android-sdk/cmdline-tools/latest
 
-          # Cập nhật biến môi trường để có thể sử dụng sdkmanager và các công cụ khác
+          # Cập nhật biến môi trường
           echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
-          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/bin:/usr/local/android-sdk/platform-tools:/usr/local/android-sdk/emulator" >> $GITHUB_ENV
+          echo "export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/platform-tools:\$ANDROID_HOME/emulator" >> $GITHUB_ENV
 
           # Kiểm tra sdkmanager
-          sdkmanager --version  # Kiểm tra sdkmanager để đảm bảo công cụ đã được cài đặt
+          echo "Checking sdkmanager version..."
+          sdkmanager --version || { echo "sdkmanager not found"; exit 1; }
 
           # Cài đặt SDK và hệ thống Android cần thiết
           yes | sdkmanager --licenses
