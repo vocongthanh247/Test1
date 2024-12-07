@@ -50,7 +50,7 @@ jobs:
 
           # Khởi động emulator trong nền (no-window để không có giao diện người dùng)
           nohup emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm & 
-          sleep 120  # Đợi emulator khởi động
+          sleep 180  # Tăng thời gian chờ để đảm bảo emulator đã khởi động
 
       # 8. Dừng Appium Server nếu đang chạy
       - name: Stop Appium Server if running
@@ -61,7 +61,7 @@ jobs:
       - name: Start Appium Server
         run: |
           appium -p 4725 &  # Khởi động Appium server trên cổng 4725
-          sleep 30  # Tăng thời gian chờ để đảm bảo server đã khởi động
+          sleep 30  # Đợi một chút để server khởi động
 
       # 10. Kiểm tra trạng thái của Appium server
       - name: Check Appium Server Status
