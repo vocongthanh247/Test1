@@ -60,13 +60,15 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
                 <configuration>
+                    <!-- Tăng bộ nhớ JVM -->
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>
-                    <argLine>-Xmx2048m -Xms1024m</argLine> <!-- Tăng bộ nhớ heap lên 2GB -->
+                    <argLine>-Xmx4096m -Xms2048m</argLine> <!-- Tăng bộ nhớ heap lên 4GB, bộ nhớ ban đầu 2GB -->
+                    <!-- Đảm bảo đường dẫn đến testng.xml chính xác -->
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/com/browserstack/sample-test.testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
-                    <!-- Chỉnh sửa javaagent -->
+                    <!-- Đảm bảo đường dẫn đúng với browserstack-java-sdk -->
                     <argLine>-javaagent:/path/to/browserstack-java-sdk.jar</argLine> <!-- Đảm bảo đúng đường dẫn -->
                 </configuration>
             </plugin>
