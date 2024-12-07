@@ -61,7 +61,7 @@ jobs:
       - name: Start Appium Server
         run: |
           appium -p 4725 &  # Khởi động Appium server trên cổng 4725
-          sleep 20  # Đợi một chút để server khởi động
+          sleep 30  # Tăng thời gian chờ để đảm bảo server đã khởi động
 
       # 10. Kiểm tra trạng thái của Appium server
       - name: Check Appium Server Status
