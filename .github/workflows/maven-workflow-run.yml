@@ -41,14 +41,19 @@ jobs:
         run: |
           yes | sdkmanager "system-images;android-30;google_apis;x86_64"
 
-      # 7. Tạo và khởi động Android Emulator
+      # 7. Cài đặt Emulator
+      - name: Install Emulator
+        run: |
+          yes | sdkmanager "emulator"
+
+      # 8. Tạo và khởi động Android Emulator
       - name: Start Android Emulator
         run: |
           echo "no" | avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64"
           emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm & 
           sleep 180  # Đợi emulator khởi động
 
-      # 8. Dừng Appium Server nếu đang chạy
+      # 9. Dừng Appium Server nếu đang chạy
       - name: Stop Appium Server if running
         run: |
           if pgrep -f appium; then
@@ -56,13 +61,13 @@ jobs:
             pkill -f appium
           fi
 
-      # 9. Khởi động Appium Server trên cổng khác (ví dụ: 4726)
+      # 10. Khởi động Appium Server trên cổng khác (ví dụ: 4726)
       - name: Start Appium Server
         run: |
           appium -p 4726 | tee appium.log &  # Khởi động Appium server trên cổng 4726 và ghi log
           sleep 30  # Đợi một chút để server khởi động
 
-      # 10. Kiểm tra trạng thái của Appium server
+      # 11. Kiểm tra trạng thái của Appium server
       - name: Check Appium Server Status
         run: |
           sleep 5  # Đợi một chút trước khi kiểm tra
@@ -74,18 +79,18 @@ jobs:
             exit 1
           fi
 
-      # 11. Kiểm tra trạng thái của Emulator
+      # 12. Kiểm tra trạng thái của Emulator
       - name: Check Emulator Status
         run: |
           adb devices || (echo "Emulator is not running." && exit 1)
 
-      # 12. Chạy các bài kiểm tra Appium
+      # 13. Chạy các bài kiểm tra Appium
       - name: Run Appium tests
         run: |
           cd android/testng-examples  # Đảm bảo bạn đang ở đúng thư mục
           mvn clean test -Dappium.server=http://localhost:4726/wd/hub  # Sử dụng cổng 4726
 
-      # 13. Dọn dẹp sau khi test xong
+      # 14. Dọn dẹp sau khi test xong
       - name: Stop Emulator
         run: |
           adb -s emulator-5554 emu kill
