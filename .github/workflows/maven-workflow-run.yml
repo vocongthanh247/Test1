@@ -47,19 +47,24 @@ jobs:
           nohup emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm & 
           sleep 120  # Đợi emulator khởi động
 
-      # 7. Khởi động Appium Server
+      # 7. Dừng Appium Server nếu đang chạy
+      - name: Stop Appium Server if running
+        run: |
+          pkill -f appium || true  # Dừng Appium server nếu nó đang chạy
+
+      # 8. Khởi động Appium Server
       - name: Start Appium Server
         run: |
           appium &  # Khởi động Appium server trong nền
           sleep 10  # Đợi một chút để server khởi động
 
-      # 8. Chạy các bài kiểm tra Appium
+      # 9. Chạy các bài kiểm tra Appium
       - name: Run Appium tests
         run: |
           cd android/testng-examples  # Đảm bảo bạn đang ở đúng thư mục
           mvn clean test  # Chỉ chạy lệnh mvn clean test
 
-      # 9. Dọn dẹp sau khi test xong
+      # 10. Dọn dẹp sau khi test xong
       - name: Stop Emulator
         run: |
           adb -s emulator-5554 emu kill
