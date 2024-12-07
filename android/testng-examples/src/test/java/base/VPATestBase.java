@@ -27,10 +27,8 @@ public class VPATestBase {
 
         URL browserstackUrl = new URL("https://hub-cloud.browserstack.com/wd/hub");
 
-        // Gán driver của lớp thay vì tạo một biến cục bộ mới
         driver = new AndroidDriver(browserstackUrl, caps);
 
-        // Kiểm tra kết nối và mở trang web Google (bạn có thể thay đổi phần này nếu không cần)
         driver.get("https://www.google.com");
         System.out.println(driver.getTitle());
     }
