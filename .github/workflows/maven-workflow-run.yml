@@ -19,22 +19,24 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '21'
-          distribution: 'temurin'  # Phân phối Temurin cho OpenJDK
+          distribution: 'temurin'
           check-latest: false
           server-id: github
           server-username: ${{ github.actor }}
           server-password: ${{ secrets.GITHUB_TOKEN }}
           overwrite-settings: true
 
-      # Cài đặt Maven (sử dụng action riêng biệt)
+      # Cài đặt Maven
       - name: Set up Maven
         run: |
           sudo apt update
           sudo apt install -y maven
 
-      # Chạy build và test với Maven
+      # Di chuyển vào thư mục chứa pom.xml và chạy build và test với Maven
       - name: Build and test with Maven
-        run: mvn clean install
+        run: |
+          cd android/testng-examples   # Thay đổi thư mục làm việc đến nơi chứa pom.xml
+          mvn clean install
 
       # Gọi API GitHub
       - name: Make an API call to GitHub
