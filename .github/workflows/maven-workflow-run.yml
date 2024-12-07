@@ -60,7 +60,14 @@ jobs:
       # 9. Kiểm tra trạng thái của Appium server
       - name: Check Appium Server Status
         run: |
-          curl -s http://localhost:4726/wd/hub/status | grep -q '"status": 0' || (echo "Appium server is not running." && exit 1)
+          sleep 5  # Đợi một chút trước khi kiểm tra
+          if curl -s http://localhost:4726/wd/hub/status | grep -q '"status": 0'; then
+            echo "Appium server is running."
+          else
+            echo "Appium server is not running. Check appium.log for details."
+            cat appium.log  # In log để kiểm tra lỗi
+            exit 1
+          fi
 
       # 10. Kiểm tra trạng thái của Emulator
       - name: Check Emulator Status
