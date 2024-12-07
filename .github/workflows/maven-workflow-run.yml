@@ -1,4 +1,4 @@
-name: Run Appium Tests on Android Emulator (Free)
+name: Run Appium Tests on Android Emulator
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   android-emulator:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Chạy trên môi trường Ubuntu
 
     steps:
       # 1. Checkout mã nguồn
@@ -19,45 +19,49 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y openjdk-11-jdk wget unzip
-
-          # Tải và giải nén SDK Command-line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
           unzip commandlinetools-linux-7583922_latest.zip
-
-          # Tạo thư mục android-sdk và di chuyển command-line tools vào đó
-          sudo mkdir -p /usr/local/android-sdk/cmdline-tools/latest
-          sudo mv cmdline-tools /usr/local/android-sdk/cmdline-tools/latest
-
-          # Thiết lập các biến môi trường
+          sudo mkdir -p /usr/local/android-sdk
+          sudo mv cmdline-tools /usr/local/android-sdk/
           echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
-          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/latest/bin:/usr/local/android-sdk/platform-tools" >> $GITHUB_ENV
-
-          # Kiểm tra lại biến môi trường
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "PATH=$PATH"
-
-          # Cài đặt các gói cần thiết qua sdkmanager
-          yes | /usr/local/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          /usr/local/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30" "emulator" "system-images;android-30;google_apis;x86_64"
+          echo "export PATH=\$PATH:/usr/local/android-sdk/cmdline-tools/bin:/usr/local/android-sdk/platform-tools" >> $GITHUB_ENV
+          # Cài đặt các công cụ Android cần thiết
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30" "emulator" "system-images;android-30;google_apis;x86_64"
 
       # 3. Cài đặt Appium
       - name: Install Appium
         run: |
           npm install -g appium
 
-      # 4. Chạy Android Emulator
+      # 4. Cài đặt Appium Doctor để kiểm tra môi trường
+      - name: Install Appium Doctor
+        run: |
+          npm install -g appium-doctor
+          appium-doctor
+
+      # 5. Tạo và khởi động Android Emulator
       - name: Start Android Emulator
         run: |
-          echo "no" | /usr/local/android-sdk/cmdline-tools/latest/bin/avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64"
-          nohup emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm &
-          sleep 120  # Đợi emulator khởi động
+          # Kiểm tra xem Emulator có đã được tạo chưa
+          echo "no" | avdmanager create avd --name test_emulator --package "system-images;android-30;google_apis;x86_64" || true
+          # Chạy emulator
+          nohup emulator -avd test_emulator -no-window -gpu off -qemu -m 2048 -enable-kvm & 
+          # Đợi Emulator khởi động
+          sleep 120  # Thời gian này có thể cần điều chỉnh tùy thuộc vào tốc độ hệ thống
 
-      # 5. Chạy các bài kiểm tra Appium
+      # 6. Khởi động Appium Server
+      - name: Start Appium Server
+        run: |
+          appium &  # Chạy Appium server ở background
+          sleep 10   # Đợi Appium server khởi động
+
+      # 7. Chạy các bài kiểm tra Appium
       - name: Run Appium tests
         run: |
           mvn clean test -Dappium.server=http://localhost:4723/wd/hub
 
-      # 6. Dọn dẹp sau khi test xong
+      # 8. Dọn dẹp sau khi test xong
       - name: Stop Emulator
         run: |
           adb -s emulator-5554 emu kill
